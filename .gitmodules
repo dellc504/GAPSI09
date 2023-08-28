@@ -1,0 +1,3 @@
+[submodule "gapsi"]
+	path = gapsi
+	url = https://github.com/dellc504/GAPSI09/gapsi
