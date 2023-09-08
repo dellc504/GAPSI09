@@ -22,7 +22,7 @@ import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 
 
 const ALL_SUPPLIERS = gql`query{Proveedores{id,nombre,razonSocial,direccion}}`;
-const DELETE_SUPPLIER = gql`mutation delUser($id:String!){deleteUser(id:$id){user}}`;
+const DELETE_SUPPLIER = gql`mutation delete($id:ID!){eliminarProveedor(id:$id)}`;
 const UPDATE_CUSTOMER = gql`mutation UpdateCustomer($id:String!, $name:String!, $domine:String, $logo:String, $key:String!, $bussines: String!){
     updateCustomer(id:$id,name:$name, domine:$domine, logo:$logo, key:$key, idBussines: $bussines){customer{id}}}`;
 
@@ -42,7 +42,7 @@ function Supplier() {
     const createCustomer = newUser2((resp) => {
         
         
-        if(resp =='ok '){
+        if(resp =='ok'){
             refetch().then(
                 (rs) => {
                     messageApi.open({
@@ -99,7 +99,7 @@ function Supplier() {
             setConfirmLoading(false)
             messageApi.open({
                 type: 'success',
-                content: 'Usuario eliminado correctamente! ',
+                content: 'Proveedor eliminado correctamente! ',
             });
 
 
@@ -180,7 +180,7 @@ function Supplier() {
 
       const deleteWRow = () => {
         setConfirmLoading(true)
-        deleteSupplier({ variables: { id: form.getFieldValue('id') } })
+        deleteSupplier({ variables: { id: +form.getFieldValue('id') } })
     }
 
 

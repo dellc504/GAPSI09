@@ -28,51 +28,6 @@ const typeDefinitions = /* GraphQL */ `
 
 const dao = new DAO("db.json");
 
-// const parseIntSafe = (value: string): number | null => {
-//   if (/^(\d+)$/.test(value)) {
-//     return parseInt(value, 10);
-//   }
-//   return null;
-// };
-
-// const applyTakeConstraints = (params: { min: number; max: number; value: number }) => {
-//   if (params.value < params.min || params.value > params.max) {
-//     throw createGraphQLError(
-//       `'take' argument value '${params.value}' is outside the valid range of '${params.min}' to '${params.max}'.`,
-//     );
-//   }
-//   return params.value;
-// };
-
-// let   p = dao.getAllData()
-
-
-// p.then(function (value) {
-//   console.log(value); // Success!
-// },
-// function (reason) {
-//   console.log(reason); // Error!
-// },)
-
-
-//console.log(dao.getAllData())
-
-
-// [
-//     {
-//         id: 100,
-//         nombre: "Google",
-//         razonSocial: "Google Inc.",
-//         direccion: "1600 Amphitheatre Parkway, Mountain View, CA 94043, EE. UU.",
-//       },
-//       {
-//         id: 200,
-//         nombre: "Microsoft",
-//         razonSocial: "Microsoft Corporation",
-//         direccion: "One Microsoft Way, Redmond, WA 98052, EE. UU.",
-//       },
-// ]
-
 const resolvers = {
   Query: {
     hello: () => `Hello World!`,
@@ -90,21 +45,21 @@ const resolvers = {
   Mutation: {
     nuevoProveedor: (parent:Proveedor , args:{nombre: string, razonSocial: string, direccion: string}) =>{
       var  supplier ={
-        id:21,
+        id: Math.floor(Math.random()*990) + 10,
         nombre:args.nombre,
         razonSocial:args.razonSocial,
         direccion:args.direccion
       }
-      dao.getAllData().then( (suppliers) =>{ 
+      return dao.getAllData().then( (suppliers) =>{ 
         var  supx = suppliers.find((sup) => sup.nombre === args.nombre)
         console.log(supx)
-        if(supx === undefined){ 
-          console.log('Intento  de registro ')
+        if(supx === undefined){
           suppliers.push(supplier)
           dao.savetData(suppliers)
-        }
-        else{
-          supplier ={
+          return supplier
+        }else{
+          console.log('repetido')
+          return {
             id:-1,
             nombre:"",
             razonSocial:"",
@@ -112,11 +67,10 @@ const resolvers = {
           }
         }
       })
-      return supplier
     },
     editarProveedor:(parent:Proveedor , args:{id:number, nombre: string, razonSocial: string, direccion: string}) =>{
       const  supplier ={
-        id:21,
+        id:args.id,
         nombre:args.nombre,
         razonSocial:args.razonSocial,
         direccion:args.direccion
@@ -126,15 +80,14 @@ const resolvers = {
       })
       return supplier
     },
-    eliminarProveedor:(parent:Proveedor , args:{id:number})=>{
-      var resp= "F"
-      dao.delete(args.id).then(()=>{
+     eliminarProveedor:(parent:Proveedor , args:{id:number})=>{
+      return dao.delete(+args.id).then(()=>{
         console.log('delete OK')
-        resp = "OK"
-      })
-
-      return resp
-      
+        return "OK"
+      }).catch(error => {
+        console.log('error in delete', error);
+        return "F"
+      });
     }
     
 
